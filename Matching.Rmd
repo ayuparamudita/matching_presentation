@@ -132,7 +132,7 @@ q-Gram-based **`cosine`**
 
 
 ```{r}
- 
+
 # cosine
 cos <- amatch(dir_kl, dir_dsi, method = "cosine", maxDist = 0.3, q = 2)
 
