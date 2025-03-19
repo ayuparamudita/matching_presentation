@@ -1,0 +1,150 @@
+---
+title: "Matching"
+author: "Ayu Paramudita"
+output: slidy_presentation
+date: "2025-03-21"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+## Introduction
+
+**Purpose**
+
+- Learn string matching methods
+- **Hopefully**, implement various methods of string distance for industry directory matching
+
+
+## String Distance
+
+**Comparing two strings to determine how similar or different they are**
+
+- Edit-based (`osa`, `levensthein`)
+- Jaro-Winkler
+- q-Gram-based (`cosine`, `qgram`)
+- Phonetic
+
+
+## R Package
+
+```{r}
+
+# Load Package
+library(stringdist)
+
+```
+
+`amatch(`
+
+  `x,       # what to match`
+
+  `table,   # reference source`
+
+  `method,  # type of string distance method`
+
+  `maxDist, # maximum distance`
+
+  `...)`
+
+
+## Exact Match
+
+```{r}
+
+# Directory KL
+dir_kl <- c("auy", "aypua", "nabi la", "lani", "rani", "rany")
+
+# Directory DSI
+dir_dsi <- c("lani", "rani", "ayu", "nabila")
+
+# Exact match
+i <- match(dir_kl, dir_dsi)
+
+# Result
+data.frame(dir_kl, matched = dir_dsi[i])
+
+```
+
+
+## Approximate String Matching : Edit-based 
+
+**`osa`** and **`levensthein`**
+
+- Case      : typo
+- `maxDist` : max number of typos
+- `osa`     : deletion, insertion, substitution and transposition (swapped characters)
+- `lv`      : transposition is ignored
+
+
+```{r}
+# osa vs lv
+osa1 <- amatch(dir_kl, dir_dsi, method = "osa", maxDist = 1)
+
+lv1 <- amatch(dir_kl, dir_dsi, method = "lv", maxDist = 1)
+
+# Result
+data.frame(dir_kl, 
+           matched       = dir_dsi[i], 
+           amatched_osa1 = dir_dsi[osa1],
+           amatched_lv1  = dir_dsi[lv1]
+           )
+
+```
+
+
+## Approximate string matching : Jaro-Winkler
+
+**`jaro-winkler`**
+
+- Case : similarity of name/address
+- `maxDist` between 0 and 1
+- Higher `maxDist` indicates more dissimilarities
+
+
+```{r}
+
+# jw
+jw <- amatch(dir_kl, dir_dsi, method = "jw", maxDist = 0.2)
+
+# Result
+data.frame(dir_kl,
+           matched       = dir_dsi[i], 
+           amatched_osa1 = dir_dsi[osa1],
+           amatched_lv1  = dir_dsi[lv1],
+           amatched_jw   = dir_dsi[jw]
+           )
+
+```
+
+## Approximate string matching : q-Gram-based
+
+q-Gram-based **`cosine`**
+
+- Case : typo word order
+- Splitting words into some parts
+- Recognizing words with different order
+- Parameter q is how many character split, e.g. q=2 lani (la, an, ni)
+- `maxDist` between 0 and 1
+- Higher `maxDist` indicates more dissimilarities
+
+
+```{r}
+
+# cosine
+cos <- amatch(dir_kl, dir_dsi, method = "cosine", maxDist = 0.3, q = 2)
+
+# Result
+data.frame(dir_kl,
+           matched       = dir_dsi[i], 
+           amatched_osa1 = dir_dsi[osa1],
+           amatched_lv1  = dir_dsi[lv1],
+           amatched_jw   = dir_dsi[jw],
+           amatched_cos  = dir_dsi[cos]
+           )
+
+```
+
+## Thank you!
