@@ -1,8 +1,9 @@
 ---
 title: "Matching"
 author: "Ayu Paramudita"
-output: slidy_presentation
 date: "2025-03-21"
+output:
+  slidy_presentation: default
 ---
 
 ```{r setup, include=FALSE}
